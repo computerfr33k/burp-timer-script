@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -130,11 +129,11 @@ func get_intervals(current string, client string, timestamp string, interval str
 		return false
 	}
 
-	lines, err := readLines(timestamp)
-	if err != nil {
-		log.Fatalf("readLines: %s", err)
-	}
-	ts := lines[0]
+	//lines, err := readLines(timestamp)
+	//if err != nil {
+	//	log.Fatalf("readLines: %s", err)
+	//}
+	//ts := lines[0]
 
 	return true
 }
