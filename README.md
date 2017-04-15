@@ -1,1 +1,1 @@
-# burp-timer-script
+# Timer script for [burp](https://github.com/grke/burp) backup in Go [![Build Status](https://travis-ci.org/computerfr33k/burp-timer-script.svg?branch=master)](https://travis-ci.org/computerfr33k/burp-timer-script)
