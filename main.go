@@ -14,6 +14,11 @@ import (
 func main() {
 	argsWithoutProg := os.Args[1:]
 
+	if len(argsWithoutProg) < 6 {
+		fmt.Println("Not enough arguments given.")
+		os.Exit(1)
+	}
+
 	client := argsWithoutProg[0]
 	current := argsWithoutProg[1]
 	storage_dir := argsWithoutProg[2]
