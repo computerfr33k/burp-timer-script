@@ -80,10 +80,10 @@ func get_intervals(current string, client string, timestamp string, interval str
 		return false
 	}
 
-	//if _,err := os.Stat(timestamp); os.IsNotExist(err) {
-	//	fmt.Println("Timestamp file missing for " + client)
-	//	return false
-	//}
+	if _,err := os.Stat(timestamp); os.IsNotExist(err) {
+		fmt.Println("Timestamp file missing for " + client)
+		return false
+	}
 
 	if len(interval) == 0 {
 		fmt.Println("No time interval given for " + client)
@@ -94,26 +94,26 @@ func get_intervals(current string, client string, timestamp string, interval str
 	intervalSecs := 0
 	re := regexp.MustCompile("([0-9]+)")
 
-	if _, err := regexp.MatchString("[0-9]+.*s", interval); err == nil {
+	if res,_ := regexp.MatchString("[0-9]+s", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 
-	} else if _, err := regexp.MatchString("[0-9]+.*m", interval); err == nil {
+	} else if res,_ := regexp.MatchString("[0-9]+.*m", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60
 
-	} else if _, err := regexp.MatchString("[0-9]+.*h", interval); err == nil {
+	} else if res,_ := regexp.MatchString("[0-9]+h", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60
 
-	} else if _, err := regexp.MatchString("[0-9]+.*d", interval); err == nil {
+	} else if res,_ := regexp.MatchString("[0-9]+.*d", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24
 
-	} else if _, err := regexp.MatchString("[0-9]+.*w", interval); err == nil {
+	} else if res,_ := regexp.MatchString("[0-9]+.*w", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24 * 7
 
-	} else if _, err := regexp.MatchString("[0-9]+.*n", interval); err == nil {
+	} else if res,_ := regexp.MatchString("[0-9]+.*n", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24 * 30
 
@@ -129,13 +129,27 @@ func get_intervals(current string, client string, timestamp string, interval str
 		return false
 	}
 
-	//lines, err := readLines(timestamp)
-	//if err != nil {
-	//	log.Fatalf("readLines: %s", err)
-	//}
-	//ts := lines[0]
+	lines,_ := readLines(timestamp)
+	ts := lines[0]
 
-	return true
+	const timeLayout = "2006-01-02 15:04:05"
+	secs,_ := time.ParseInLocation(timeLayout, ts, time.Local) // YYYY-MM-DD hh:mm:ss
+	now := time.Now()
+
+	min_timesecs := secs.Unix() + int64(intervalSecs)
+	min_time := time.Unix(min_timesecs, 0).Format(timeLayout)
+
+	fmt.Printf("Last Backup: %s\n", ts)
+	fmt.Printf("Next after: %s (interval %s)\n", min_time, interval)
+
+	if min_timesecs < now.Unix() {
+		fmt.Printf("%s < now.\n", min_time)
+		fmt.Printf("Do a backup of %s now.\n", client)
+
+		return true
+	}
+
+	return false
 }
 
 // readLines reads a whole file into memory
