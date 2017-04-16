@@ -69,7 +69,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if get_intervals(current, client, timestamp, interval) == true {
+	if get_intervals(current, client, timestamp, interval) {
 		fmt.Println("Do a backup of " + client + " now.")
 		os.Exit(0)
 	}
@@ -82,12 +82,12 @@ func get_intervals(current string, client string, timestamp string, interval str
 	if _, err := os.Stat(current); os.IsNotExist(err) {
 		fmt.Println("No Prior backup of " + client)
 
-		return false
+		return true
 	}
 
 	if _,err := os.Stat(timestamp); os.IsNotExist(err) {
 		fmt.Println("Timestamp file missing for " + client)
-		return false
+		return true
 	}
 
 	if len(interval) == 0 {
@@ -136,6 +136,8 @@ func get_intervals(current string, client string, timestamp string, interval str
 
 	lines,_ := readLines(timestamp)
 	ts := lines[0]
+	re = regexp.MustCompile("(\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2})")
+	ts = re.FindString(ts)
 
 	const timeLayout = "2006-01-02 15:04:05"
 	secs,_ := time.ParseInLocation(timeLayout, ts, time.Local) // YYYY-MM-DD hh:mm:ss
@@ -148,8 +150,7 @@ func get_intervals(current string, client string, timestamp string, interval str
 	fmt.Printf("Next after: %s (interval %s)\n", min_time, interval)
 
 	if min_timesecs < now.Unix() {
-		fmt.Printf("%s < now.\n", min_time)
-		fmt.Printf("Do a backup of %s now.\n", client)
+		fmt.Printf("%s < %s.\n", min_time, now.Format(timeLayout))
 
 		return true
 	}
