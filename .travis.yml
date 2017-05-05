@@ -1,10 +1,18 @@
 language: go
-
 go:
-  - 1.5
-  - 1.6
-  - 1.7
-  - 1.8
-
+- 1.5
+- 1.6
+- 1.7
+- 1.8
 notifications:
   email: false
+before_deploy: "scripts/build.sh"
+deploy:
+  provider: releases
+  api_key:
+    secure: SfwWQV3WZQAdu97TLOz3eXlEHvumH8sr/AmwPdvVG1JYVJ9pKoQjzOpj+2tFaWel7yuzkVN+fFwtlxJfvr+sTuocuDGhTdDsD6v8wncjPy46nOICYVrRDKN12UQajX9tTDso/0mg+AxBWHktu8JKKKFC09CIQE062kQLrC99Usq9fEtQN/w0sRa/yU5py9umvlaesYO2Sp3f6Bi2x1H5oYww5A+aa4Q4ReHb7wEDF2jo2B3jAU0C6gx+jzPR/B5JYMdncwwrC79kpe70OXZ513oL317aMmzYmnQiq9hnbUKeyrFnc1kKBkhlm8qSHXAwVVdt7f7ZZDxEm61arh2v5e0ruNHvZUHXxL+F63iMgTswD+fN/WzoCfodSk/f0NXQUvstrQGJc3TRDn9U21+mXfmeSyc+OoOZuK5TY4MdAoTEAlorVvb6nK8f1VLIwhtwFKt8mAOU9y2gFUrYO/UVwchvsmeCmw9T5RZmJiW86l3upRnSGj2ssCUBIeznbBeFEgTG0tdC16fBSgsU6e2ZntfAhS/Z/07FHFZ8C84wzLoz6S4mbSqW1omURiY+cTX7M5Ww8oCYdOQ3rLm91NSFR7iMj3QRGe+p0xtPmMLHVkwfg1kVyz/1Nj+Uc9ggL/RjleUQRuC12dl6BLL8HqraS0ksPgkzgNzg5C78fYkhP5o=
+  file_glob: true
+  file: build/*
+  skip_cleanup: true
+  on:
+    tags: true
