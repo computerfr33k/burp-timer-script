@@ -46,7 +46,7 @@ func main() {
 	}
 
 	// The rest of the arguments, if any, should be timebands.
-	curDayHour := time.Now().Format("*Mon*03*")
+	curDayHour := time.Now().Format("*Mon*15*")
 
 	inTimeband := false // If no timebands given, default to not OK.
 	timebands := argsWithoutProg[6:]
@@ -56,6 +56,7 @@ func main() {
 
 	for i := 0; i < len(timebands); i++ {
 		inTimeband = false
+
 		if glob.Glob(curDayHour, timebands[i]) {
 			fmt.Println("In timeband: " + timebands[i])
 			inTimeband = true
