@@ -11,4 +11,6 @@ This is a port of the default [timer script](https://github.com/grke/burp/blob/m
 This program is a complete drop-in replacement for the default bash script included with burp installation.
 In order to use it, just download and copy it to your existing burp scripts folder (default: `/usr/share/burp/scripts/`), then change the `timer_script` line in your server's config file to point to the program.
 
+Hint: Don't forget to make the program executable.
+
 For example `timer_script = /usr/share/burp/scripts/timer_script-linux-amd64`
