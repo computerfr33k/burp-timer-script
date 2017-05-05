@@ -1,5 +1,4 @@
 # [Burp](https://github.com/grke/burp) Timer Script (Go)
---------------------------
 
 [![Build Status](https://travis-ci.org/computerfr33k/burp-timer-script-go.svg?branch=master)](https://travis-ci.org/computerfr33k/burp-timer-script-go)
 
