@@ -30,18 +30,7 @@ func main() {
 	// A 'backup' file placed in the storage directory tells this script that
 	// a backup needs to be done right now.
 	// This gives the 'server initiates a manual backup' feature.
-
-	manual_file := storage_dir + "/" + client + "/backup"
-	if _, err := os.Stat(manual_file); err == nil {
-		fmt.Println("Found " + manual_file)
-		fmt.Println("Do a backup of " + client + " now")
-
-		err := os.Remove(manual_file)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
+	if force_manual_backup(storage_dir, client) {
 		os.Exit(0)
 	}
 
@@ -77,6 +66,24 @@ func main() {
 
 	fmt.Println("Not yet time for a backup of " + client)
 	os.Exit(1)
+}
+
+func force_manual_backup(storage_dir string, client string) bool {
+	manual_file := storage_dir + "/" + client + "/backup"
+	if _, err := os.Stat(manual_file); err == nil {
+		fmt.Println("Found " + manual_file)
+		fmt.Println("Do a backup of " + client + " now")
+
+		err := os.Remove(manual_file)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return false
+		}
+
+		return true
+	}
+
+	return false
 }
 
 func get_intervals(current string, client string, timestamp string, interval string) bool {
