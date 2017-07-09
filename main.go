@@ -15,7 +15,7 @@ func main() {
 	argsWithoutProg := os.Args[1:]
 
 	if len(argsWithoutProg) < 6 {
-		fmt.Println("Not enough arguments given.")
+		fmt.Fprintln(os.Stderr, "Not enough arguments given.")
 		os.Exit(1)
 	}
 
@@ -86,13 +86,14 @@ func get_intervals(current string, client string, timestamp string, interval str
 		return true
 	}
 
-	if _,err := os.Stat(timestamp); os.IsNotExist(err) {
-		fmt.Println("Timestamp file missing for " + client)
+	if _, err := os.Stat(timestamp); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "Timestamp file missing for %s\n", client)
+
 		return true
 	}
 
 	if len(interval) == 0 {
-		fmt.Println("No time interval given for " + client)
+		fmt.Fprintf(os.Stderr, "No time interval given for %s\n", client)
 
 		return false
 	}
@@ -100,48 +101,48 @@ func get_intervals(current string, client string, timestamp string, interval str
 	intervalSecs := 0
 	re := regexp.MustCompile("([0-9]+)")
 
-	if res,_ := regexp.MatchString("[0-9]+s", interval); res {
+	if res, _ := regexp.MatchString("[0-9]+s", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 
-	} else if res,_ := regexp.MatchString("[0-9]+.*m", interval); res {
+	} else if res, _ := regexp.MatchString("[0-9]+.*m", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60
 
-	} else if res,_ := regexp.MatchString("[0-9]+h", interval); res {
+	} else if res, _ := regexp.MatchString("[0-9]+h", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60
 
-	} else if res,_ := regexp.MatchString("[0-9]+.*d", interval); res {
+	} else if res, _ := regexp.MatchString("[0-9]+.*d", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24
 
-	} else if res,_ := regexp.MatchString("[0-9]+.*w", interval); res {
+	} else if res, _ := regexp.MatchString("[0-9]+.*w", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24 * 7
 
-	} else if res,_ := regexp.MatchString("[0-9]+.*n", interval); res {
+	} else if res, _ := regexp.MatchString("[0-9]+.*n", interval); res {
 		intervalSecs, _ = strconv.Atoi(re.FindString(interval))
 		intervalSecs *= 60 * 60 * 24 * 30
 
 	} else {
-		fmt.Println("interval " + interval + " not understood for " + client)
+		fmt.Fprintf(os.Stderr, "interval %s not understood for %s\n", interval, client)
 
 		return false
 	}
 
 	if intervalSecs == 0 {
-		fmt.Println("interval " + interval + " not understood for " + client)
+		fmt.Fprintf(os.Stderr, "interval %s not understood for %s\n", interval, client)
 
 		return false
 	}
 
-	lines,_ := readLines(timestamp)
+	lines, _ := readLines(timestamp)
 	ts := lines[0]
 	re = regexp.MustCompile("(\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2})")
 	ts = re.FindString(ts)
 
 	const timeLayout = "2006-01-02 15:04:05"
-	secs,_ := time.ParseInLocation(timeLayout, ts, time.Local) // YYYY-MM-DD hh:mm:ss
+	secs, _ := time.ParseInLocation(timeLayout, ts, time.Local) // YYYY-MM-DD hh:mm:ss
 	now := time.Now()
 
 	min_timesecs := secs.Unix() + int64(intervalSecs)
